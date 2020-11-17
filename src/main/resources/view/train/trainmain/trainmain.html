@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<!--解决idea thymeleaf 表达式模板报红波浪线-->
+<!--suppress ALL -->
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!-- 引入公用部分 -->
+    <script th:replace="common/head::static"></script>
+    <!-- 样式 -->
+    <link th:href="@{/train/trainmain/css/trainmain.css}" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<div class="layui-row layui-col-space12">
+    <!-- 树 -->
+    <div class="layui-col-md12">
+        <div class="layui-card">
+<!--            <div class="layui-card-header">全部计划列表</div>-->
+            <div class="layui-card-body">
+                <!-- 表格主体 -->
+                <table class="layui-hide" id="trainMainTable" lay-filter="test"></table>
+                <!-- 模板 -->
+                <script type="text/html" id="authorityTableToolbarDemo">
+                    <div class="layui-btn-container">
+                        <button class="layui-btn layui-btn-sm" lay-event="addData">新增</button>
+                        <input type="text" id="queryByAuthorityName" name="queryByAuthorityName" autocomplete="off"
+                               placeholder="请输入权限名称" class="layui-input layui-btn-sm">
+                        <button class="layui-btn layui-btn-sm" lay-event="query">查询</button>
+                    </div>
+                </script>
+                <script type="text/html" id="authorityTableBarDemo">
+                    <a class="layui-btn layui-btn-xs" lay-event="train">训练</a>
+                    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+                </script>
+                <script type="text/html" id="trainAllTimeBarDemo">
+                    {{ formatSeconds(d.trainAllTime) }}
+                </script>
+                <script type="text/html" id="trainTypeBarDemo">
+                    <select name="trainTypeSelect" lay-verify="required" data-state="{{ d.trainType }}">
+                        <option value="">请选择一个训练类型</option>
+                        <option value="0">数据库</option>
+                        <option value="1">代码</option>
+                        <option value="4">操作</option>
+                    </select>
+                </script>
+            </div>
+        </div>
+    </div>
+    <div style="display:none;padding: 50px;padding-top:10px; line-height: 22px; background-color: #393D49; color: #fff; font-weight: 300;" class="layui-col-md12" id="show_div">
+        <form id="commentForm" novalidate="novalidate">
+            <div class="layui-row">
+                <div class="layui-col-md6">
+                    <div class="layui-row grid-demo">
+                        <div class="layui-col-md3">
+                            <div class="grid-demo grid-demo-bg1">
+                                <label class="layui-col-md3d control-label">本次训练时间：</label>
+                            </div>
+                        </div>
+                        <div >
+                            <div class="grid-demo grid-demo-bg2">
+                                <label class="layui-col-md3d control-label" id="counttime">00:00:00</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-xs3">
+                    <label class="col-md-3 control-label">训练类别：</label>
+                    <select id="trainTypeSelectItem" name="trainTypeSelectItem" lay-verify="required" data-state="{{ d.trainType }}">
+                        <option value="">请选择一个训练类型</option>
+                        <option value="0">数据库</option>
+                        <option value="1">代码</option>
+                        <option value="4">操作</option>
+                    </select>
+                </div>
+
+                <div class="layui-col-xs3">
+                    训练次数：
+                    <label class="col-md-3 control-label" id="traintime"></label>
+                </div>
+            </div>
+            <div class="layui-row">
+                <div class="layui-col-md3">
+                    <input type="button" value="开始训练" onclick="starttrain();" />
+                    <input type="button" value="结束训练" onclick="endtrain();" />
+                </div>
+                <div class="layui-col-md3">
+                    <div class="layui-col-md12">
+                        <div class="grid-demo grid-demo-bg3">
+                            <input name="is_notice" value="1" type="checkbox" title="" checked=false>
+                            <label class="layui-col-xs6">本次训练是否出错</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-md6">
+                    <input type="text" alt="请输入错误的地方" />
+                </div>
+            </div>
+            <div class="layui-row">
+                <label class="col-md-3 control-label">训练内容：</label>
+            </div>
+            <div class="layui-row">
+                <div class="layui-col-xs12">
+                    <textarea id="content" style="width: 1000px; margin: 0px; height: 350px;overflow-x:auto;">
+
+                    </textarea>
+                </div>
+            </div>
+            <div class="layui-row">
+                <div class="layui-col-xs6">
+                    <label class="col-md-3 control-label">备注：</label>
+<!--                    <input id="cname" name="name" minlength="2" type="text" class="form-control" required="" aria-required="true">-->
+                    <textarea id="remark" style="width: 1000px; margin: 0px; height: 150px;overflow-x:auto;">
+
+                    </textarea>
+                </div>
+            </div>
+<!--            <div class="form-group">-->
+<!--                <label class="col-sm-3 control-label">E-mail：</label>-->
+<!--                <div class="col-sm-8">-->
+<!--                    <input id="cemail" type="email" class="form-control" name="email" required="" aria-required="true">-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="form-group">-->
+<!--                <label class="col-sm-3 control-label">网站：</label>-->
+<!--                <div class="col-sm-8">-->
+<!--                    <input id="curl" type="url" class="form-control" name="url">-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="form-group">-->
+<!--                <label class="col-sm-3 control-label">说明：</label>-->
+<!--                <div class="col-sm-8">-->
+<!--                    <textarea id="ccomment" name="comment" class="form-control" required="" aria-required="true"></textarea>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="form-group">-->
+<!--                <div class="col-sm-4 col-sm-offset-3">-->
+<!--                    <button class="btn btn-primary" type="submit">提交</button>-->
+<!--                </div>-->
+<!--            </div>-->
+        </form>
+    </div>
+    <!-- 操作表单 -->
+<!--    <div class="layui-col-md6">-->
+<!--        <div class="layui-card">-->
+<!--            <div class="layui-card-header">操作表单</div>-->
+<!--            <div class="layui-card-body">-->
+<!--                <form id="authorityForm" class="layui-form layui-form-pane">-->
+<!--                    <div class="layui-form-item">-->
+<!--                        <label class="layui-form-label">权限名称，ROLE_开头，全大写</label>-->
+<!--                        <div class="layui-input-block">-->
+<!--                            <input type="text" name="authorityName" autocomplete="off" placeholder="权限名称，ROLE_开头，全大写"-->
+<!--                                   class="layui-input">-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div class="layui-form-item">-->
+<!--                        <label class="layui-form-label">权限内容，可访问的url，多个时用,隔开</label>-->
+<!--                        <div class="layui-input-block">-->
+<!--                            <input type="text" name="authorityContent" autocomplete="off" placeholder="权限内容，可访问的url，多个时用,隔开"-->
+<!--                                   class="layui-input">-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div class="layui-form-item">-->
+<!--                        <label class="layui-form-label">权限描述</label>-->
+<!--                        <div class="layui-input-block">-->
+<!--                            <input type="text" name="authorityRemark" autocomplete="off" placeholder="权限描述"-->
+<!--                                   class="layui-input">-->
+<!--                        </div>-->
+<!--                    </div>-->
+
+<!--                    <div class="layui-form-item">-->
+<!--                        <div class="layui-input-block">-->
+<!--                            <a class="layui-btn" onclick="authorityFormSave()">保存</a>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    &lt;!&ndash; 隐藏域 &ndash;&gt;-->
+<!--                    <input type="text" name="authorityId" hidden="hidden"/>-->
+<!--                </form>-->
+
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+</div>
+</body>
+<!-- js -->
+<script th:src="@{/train/trainmain/js/trainmain.js}"></script>
+</html>

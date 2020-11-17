@@ -1,0 +1,20 @@
+body, html {
+    margin: 0;
+    padding: 0;
+}
+
+.layui-side-scroll{
+    width: 140px;
+}
+
+.layui-layout-admin .layui-side{
+    width: 140px;
+}
+/*200-60*/
+.layui-body {
+    left:140px;
+}
+
+.layui-nav-tree .layui-nav-more{
+    right: 90px;
+}
