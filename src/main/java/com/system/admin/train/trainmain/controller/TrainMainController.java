@@ -25,9 +25,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @RestController
 @RequestMapping("/train/trainMain/")
 public class TrainMainController extends CommonController<TrainMainVo, TrainMain, String> {
@@ -37,6 +34,14 @@ public class TrainMainController extends CommonController<TrainMainVo, TrainMain
     @GetMapping("trainmain")
     public ModelAndView trainmain(){
         return new ModelAndView("train/trainmain/trainmain");
+    }
+
+
+    @PostMapping("finshOneTrain")
+    @Decrypt
+    @Encrypt
+    public void finshOneTrain(TrainMainVo trainMainVo){
+        trainMainService.finshOneTrain(trainMainVo);
     }
 
 }

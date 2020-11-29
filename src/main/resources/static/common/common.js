@@ -312,6 +312,60 @@ commonUtil = {
 };
 
 
+commonDateUtil = {
+    hour:0,
+    minute:0,
+    second:0,
+    millisecond:0,
+    int:0,
+
+    //重置
+    reset:function () {
+        window.clearInterval(commonDateUtil.int);
+        commonDateUtil.millisecond=commonDateUtil.hour=commonDateUtil.minute=commonDateUtil.second=0;
+    },
+
+    //开始计时
+    start:function (counttime) {
+        commonDateUtil.reset();
+        commonDateUtil.int=setInterval(function(){ commonDateUtil.timer(counttime)},50);
+    },
+
+    toDub:function (n) {
+        return n<10?"0"+n:""+n;
+    },
+
+    //显示时间
+    timer:function (counttime) {
+        commonDateUtil.millisecond=commonDateUtil.millisecond+50;
+        if(commonDateUtil.millisecond>=1000)
+        {
+            commonDateUtil.millisecond=0;
+            commonDateUtil.second=commonDateUtil.second+1;
+        }
+        if(commonDateUtil.second>=60)
+        {
+            commonDateUtil.second=0;
+            commonDateUtil.minute=commonDateUtil.minute+1;
+        }
+
+        if(commonDateUtil.minute>=60)
+        {
+            commonDateUtil.minute=0;
+            commonDateUtil.hour=commonDateUtil.hour+1;
+        }
+        counttime.text(commonDateUtil.toDub(commonDateUtil.hour)+':'+commonDateUtil.toDub(commonDateUtil.minute)+':'+commonDateUtil.toDub(commonDateUtil.second));
+    },
+
+    //暂停
+    stop:function () {
+        window.clearInterval(commonDateUtil.int);
+        return commonDateUtil.int;
+    },
+
+};
+
+
 /* 以下代码所有页面统一执行  */
 
 //扩展jquery对象方法

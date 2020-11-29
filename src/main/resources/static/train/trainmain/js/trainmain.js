@@ -146,11 +146,15 @@ layui.use(['element', 'form', 'table', 'layer', 'laydate','tree', 'util'], funct
                     $('#content').val(data.trainContent);
                     //备注
                     $('#remark').val(data.remark);
+                    //id
+                    $('#id').val(data.id);
+
 
                     layer.full(index);
                 },
                 end:function () {
-                    reset();
+                    $('#counttime').text('00:00:00');
+                    endtrain();
                 }
             });
         }
@@ -208,65 +212,81 @@ function formatSeconds(value) {
     return result;
 }
 
-var hour,minute,second;//时 分 秒
-hour=minute=second=0;//初始化
-var millisecond=0;//毫秒
-var int;
-function reset()//重置
-{
-    window.clearInterval(int);
-    millisecond=hour=minute=second=0;
-    $('#counttime').text('00:00:00');
-    // document.getElementById('counttime').value='00:00:00:000';
-}
-
-function start()//开始
-{
-    int=setInterval(timer,50);
-}
-
-function timer()//计时
-{
-    millisecond=millisecond+50;
-    if(millisecond>=1000)
-    {
-        millisecond=0;
-        second=second+1;
-    }
-    if(second>=60)
-    {
-        second=0;
-        minute=minute+1;
-    }
-
-    if(minute>=60)
-    {
-        minute=0;
-        hour=hour+1;
-    }
-    $('#counttime').text(toDub(hour)+':'+toDub(minute)+':'+toDub(second));
-    // document.getElementById('counttime').text=toDub(hour)+':'+toDub(minute)+':'+toDub(second);
-
-}
-
-function stop()//暂停
-{
-    window.clearInterval(int);
-}
-//补零
-function toDub(n){
-    return n<10?"0"+n:""+n;
-}
+// var hour,minute,second;//时 分 秒
+// hour=minute=second=0;//初始化
+// var millisecond=0;//毫秒
+// var int;
+// function reset()//重置
+// {
+//     window.clearInterval(int);
+//     millisecond=hour=minute=second=0;
+//     $('#counttime').text('00:00:00');
+//     // document.getElementById('counttime').value='00:00:00:000';
+// }
+//
+// function start()//开始
+// {
+//     int=setInterval(timer,50);
+// }
+//
+// function timer()//计时
+// {
+//     millisecond=millisecond+50;
+//     if(millisecond>=1000)
+//     {
+//         millisecond=0;
+//         second=second+1;
+//     }
+//     if(second>=60)
+//     {
+//         second=0;
+//         minute=minute+1;
+//     }
+//
+//     if(minute>=60)
+//     {
+//         minute=0;
+//         hour=hour+1;
+//     }
+//     $('#counttime').text(toDub(hour)+':'+toDub(minute)+':'+toDub(second));
+//     // document.getElementById('counttime').text=toDub(hour)+':'+toDub(minute)+':'+toDub(second);
+//
+// }
+//
+// function stop()//暂停
+// {
+//     window.clearInterval(int);
+// }
+// //补零
+// function toDub(n){
+//     return n<10?"0"+n:""+n;
+// }
 
 //开始训练
 function starttrain() {
-    //先重置
-    reset();
-    //开始计时
-    start();
+
+    // commonDateUtil.reset();
+    $('#counttime').text('00:00:00');
+
+    commonDateUtil.start($('#counttime'));
+    // //先重置
+    // reset();
+    // //开始计时
+    // start();
 }
 
 //结束训练
 function endtrain(){
-    stop();//暂停
+    //计时器停止
+    var sect = commonDateUtil.stop();
+    // stop();//暂停
+
+    let commentForm = $("#commentForm").serializeObject();
+    commentForm.sect = sect;
+    $.post(ctx + "/train/trainMain/finshOneTrain", commentForm, function (data) {
+        console.log(commentForm);
+        alert("成功");
+        console.log(data);
+    });
+
 }

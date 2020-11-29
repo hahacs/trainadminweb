@@ -11,4 +11,6 @@ public interface TrainMainService extends CommonService<TrainMainVo, TrainMain, 
     Result<TrainMainVo> findById(String id);
 
     public Result<PageInfo<TrainMainVo>> findALLTrainList();
+
+    public void finshOneTrain(TrainMainVo trainMainVo);
 }
